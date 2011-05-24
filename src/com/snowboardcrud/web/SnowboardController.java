@@ -8,6 +8,7 @@ import com.snowboardcrud.repository.PMF;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -22,10 +23,6 @@ public class SnowboardController {
 		
 		System.out.println("Brand:" + snowboard.getBrand() + " " +
 					"Model:" + snowboard.getModel());
-		
-		//String brand = snowboard.getBrand();
-		//String model = snowboard.getModel();
-        //Snowboard snowboard = new Snowboard();
 
         PersistenceManager pm = PMF.get().getPersistenceManager();
         try {
@@ -37,6 +34,26 @@ public class SnowboardController {
         }
 		
 		return "redirect:createSnowboard";
+	}
+	
+	@RequestMapping(value = "/deleteSnowboard/{id}")
+	public String processDeleteSnowboard(@PathVariable ("id") Long id) {
+		
+		System.out.println("Snowboard with id:" + id + " " +
+					"--- Ready For Deletion");
+
+        PersistenceManager pm = PMF.get().getPersistenceManager();
+        try {
+        	Snowboard snowboard = pm.getObjectById(Snowboard.class, id);
+        	pm.deletePersistent(snowboard);
+            pm.makePersistent(snowboard);
+        } catch (Exception e){
+        	System.out.println(e);
+        } finally {
+            pm.close();
+        }
+	
+		return "redirect:/snowboard/createSnowboard";
 	}
 	
 	@RequestMapping("/createSnowboard")

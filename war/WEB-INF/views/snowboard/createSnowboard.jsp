@@ -8,7 +8,7 @@
 	<title>Create Snowboard</title>
 </head>
 <body>
-<h2>Create</h2>
+<h3>Create</h3>
 <form:form method="post" action="/snowboard/processCreateSnowboard">
 
 	<table>
@@ -28,22 +28,36 @@
 </table>	
 	
 </form:form>
+<hr />
 <%
 	PersistenceManager pm = PMF.get().getPersistenceManager();
-	String query = "select from " + Snowboard.class.getName() + " order by brand desc range 0,5";
+	String query = "select from " + Snowboard.class.getName() + " order by brand, model asc range 0,5";
 	List<Snowboard> snowboards = (List<Snowboard>) pm.newQuery(query).execute();
 	if (snowboards.isEmpty()) {
  %>
- <p>No snowboards currently exist.</p>
+<p>No snowboards currently exist.</p>
+<%	} else { %>
+<table>
+        <tr>
+                <td><b>Brand</b></td>
+                <td><b>Model</b></td>
+                <td></td>
+        </tr>
+ <%
+		for (Snowboard s : snowboards) {
+ %>
+        <tr>
+                <td><%= s.getBrand() %></td>
+                <td><%= s.getModel() %></td>
+                <td><a href="/snowboard/deleteSnowboard/<%= s.getId() %>">Delete</a></td>
+        </tr>
 <%
-    } else {
-        for (Snowboard s : snowboards) {
+		}
 %>
-<p>Brand: <%= s.getBrand() %>  Model: <%= s.getModel() %></p>
+</table>
 <%
-        }
-    }
-    pm.close();
+	}
+	pm.close();
 %>
 </body>
 </html>
