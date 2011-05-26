@@ -56,9 +56,29 @@ public class SnowboardController {
 		return "redirect:/snowboard/createSnowboard";
 	}
 	
-	@RequestMapping(value = "/ajaxUpdate", method = RequestMethod.POST)
-	public String ajaxUpdate(){
-		System.out.println("testing ajax.....");
+	@RequestMapping(value = "/ajaxUpdate/{id}/{newValue}", method = RequestMethod.POST)
+	public String ajaxUpdate(@PathVariable ("id") String id, 
+			@PathVariable ("newValue") String newValue){
+		
+		String[] array = id.split("\\_");
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+        try {
+        	Snowboard snowboard = pm.getObjectById(Snowboard.class, Long.valueOf(array[0]));
+        	if(array[1].equals("Brand")){
+        		snowboard.setBrand(newValue);
+        	}else if(array[1].equals("Model")){
+        		snowboard.setModel(newValue);
+        	}else if(array[1].equals("Length")){
+        		System.out.println("setLength");
+        	}else{
+        		System.out.println("setType");
+        	}
+        } catch (Exception e){
+        	System.out.println(e);
+        } finally {
+            pm.close();
+        }
+		
 		return null;
 	}
 	

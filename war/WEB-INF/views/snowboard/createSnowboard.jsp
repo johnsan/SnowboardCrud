@@ -13,28 +13,28 @@
 <body>
 <h3>Create</h3>
 <form:form method="post" action="/snowboard/processCreateSnowboard">
-<div id="container">
-	<div id="form_row">
-		<div id="left">
+<div class="container">
+	<div class="form_row">
+		<div class="left">
 			<form:label path="brand">Brand</form:label>
 		</div>
-		<div id="right">
+		<div class="right">
 			<form:input path="brand" />
 		</div>
 	</div>
-	<div id="form_row">
-		<div id="left">
+	<div class="form_row">
+		<div class="left">
 			<form:label path="model">Model</form:label>
 		</div>
-		<div id="right">
+		<div class="right">
 			<form:input path="model" />
 		</div>
 	</div>
-	<div id="form_row">
-		<div id="left">
+	<div class="form_row">
+		<div class="left">
 			<input type="submit" value="Create"/>
 		</div>
-		<div id="right">
+		<div class="right">
 			<p></p>
 		</div>
 	</div>
@@ -50,41 +50,41 @@
  %>
 <p>No snowboards currently exist.</p>
 <%	} else { %>
-<div id="container">
-	<div id="top_row">
-		<div id="left">
+<div class="container">
+	<div class="top_row">
+		<div class="left">
 			<p>Brand</p>
 		</div>
-		<div id="middle">
+		<div class="middle">
 			<p>Model</p>
 		</div>
-		<div id="middle">
+		<div class="middle">
 			<p>Length</p>
 		</div>
-		<div id="middle">
+		<div class="middle">
 			<p>Type</p>
 		</div>
-		<div id="right">
+		<div class="right">
 			<p></p>
 		</div>
 	</div>
  <%
 		for (Snowboard s : snowboards) {
  %>
- 	<div id="row">
-		<div id="left">
+ 	<div class="row">
+		<div class="left" id="<%= s.getId() %>_Brand">
 			<span><%= s.getBrand() %></span>
 		</div>
-		<div id="middle">
+		<div class="middle" id="<%= s.getId() %>_Model">
 			<span><%= s.getModel() %></span>
 		</div>
-		<div id="middle">
+		<div class="middle" id="<%= s.getId() %>_Length">
 			<span>152</span>
 		</div>
-		<div id="middle">
+		<div class="middle" id="<%= s.getId() %>_Type">
 			<span>Freestyle</span>
 		</div>
-		<div id="right">
+		<div class="right">
 			<span><a href="/snowboard/deleteSnowboard/<%= s.getId() %>">Delete</a></span>
 		</div>
 	</div>
@@ -100,40 +100,35 @@
       
 <!-- AJAX TEST -->
 <br /><br /><br />
-<a id="ajax_test" href="">Test</a>
+<a class="ajax_test" href="">Test</a>
 <script type="text/javascript">
 
 	$(document).ready(function() {
-		$("#ajax_test").click(function(e) {
+		$(".ajax_test").click(function(e) {
 			e.preventDefault();
 	    	alert("msg");
 	    });  
 	});
-	$("#left span,#middle span").hover(function(){
+	$(".left span,.middle span").hover(function(){
 		$(this).addClass("highlight");
 	},function(){
 		$(this).removeClass("highlight");
 	});
-	$("#left span,#middle span").click(function(){
+	$(".left span,.middle span").click(function(){
 		var text = $(this).text();
 		var length = text.length;
 		$(this).text('');
 		$('<input type="text" size="'+length+'" />').appendTo($(this)).val(text).select().blur(
 	            function(){
 	                var newText = $(this).val();
-	                $.post("/snowboard/ajaxUpdate/");
+	                var currentId = $(this).parents('div:first').attr('id');
+	                $.post("/snowboard/ajaxUpdate/"+currentId+"/"+newText);
 	                $(this).parent().text(newText),find('input').remove();
-	                //$.post("/snowboard/ajaxUpdate/");
-	                
-	                // save new value by sending to a url
-	                // handle url in controller
+	                // do on blur and 'return' key
+	                // use bind and keypress
+	                // remove on esc
 	                // whilst saving, display saving div
 	            });
-		//$('<textarea />').appendTo($(this)).val(text).select().blur(
-	    //        function(){
-	    //            var newText = $(this).val();
-	    //            $(this).parent().text(newText),find('textarea').remove();
-	    //        });
 	});
 	
 </script>

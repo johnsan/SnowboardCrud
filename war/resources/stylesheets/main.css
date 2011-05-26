@@ -5,22 +5,22 @@ body {
 h3{
 	font-size:14px;
 }
-#container {
+.container {
 	display: table;
 	font-size: 11px;
 }
-#top_row  {
+.top_row  {
 	display: table-row;
 	background: #CFDBF3;
 	color: #445276;
 	font-weight:bold;
 }
-#row  {
+.row  {
 	display: table-row;
 	background: #F9F8FB;
 	color: #716E6E;
 }
-#left, #right, #middle {
+.left, .right, .middle {
 	display: table-cell;
 	padding-right: 10px;
 }
