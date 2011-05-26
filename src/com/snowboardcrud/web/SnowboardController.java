@@ -56,6 +56,12 @@ public class SnowboardController {
 		return "redirect:/snowboard/createSnowboard";
 	}
 	
+	@RequestMapping(value = "/ajaxUpdate", method = RequestMethod.POST)
+	public String ajaxUpdate(){
+		System.out.println("testing ajax.....");
+		return null;
+	}
+	
 	@RequestMapping("/createSnowboard")
 	public ModelAndView showSnowboards() {
 		return new ModelAndView("snowboard/createSnowboard", "command", new Snowboard());

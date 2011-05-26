@@ -1,0 +1,29 @@
+body {
+    font-family: Arial, Verdana, Helvetica, sans-serif;
+    background-color: #FFFFFF;
+}
+h3{
+	font-size:14px;
+}
+#container {
+	display: table;
+	font-size: 11px;
+}
+#top_row  {
+	display: table-row;
+	background: #CFDBF3;
+	color: #445276;
+	font-weight:bold;
+}
+#row  {
+	display: table-row;
+	background: #F9F8FB;
+	color: #716E6E;
+}
+#left, #right, #middle {
+	display: table-cell;
+	padding-right: 10px;
+}
+.highlight{
+	background-color:#FFCCFF;
+}
