@@ -1,25 +1,28 @@
 package com.snowboardcrud.domain;
 
-import javax.jdo.annotations.IdGeneratorStrategy;
-import javax.jdo.annotations.IdentityType;
-import javax.jdo.annotations.PersistenceCapable;
-import javax.jdo.annotations.Persistent;
-import javax.jdo.annotations.PrimaryKey;
+import com.google.appengine.api.datastore.Key;
 
-@PersistenceCapable(identityType = IdentityType.APPLICATION)
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+@Entity
 public class Snowboard {
-    @PrimaryKey
-    @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-    private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Key key;
 
-    @Persistent
     private String brand;
 
-    @Persistent
     private String model;
+    
+    private Short length;
 
-    public Long getId() {
-        return id;
+    private String snowsportGenre;
+
+    public Key getKey() {
+        return key;
     }
 
 	public void setBrand(String brand) {
@@ -37,4 +40,21 @@ public class Snowboard {
 	public String getModel() {
 		return model;
 	}
+
+	public void setLength(Short length) {
+		this.length = length;
+	}
+
+	public Short getLength() {
+		return length;
+	}
+
+	public void setSnowsportGenre(String snowsportGenre) {
+		this.snowsportGenre = snowsportGenre;
+	}
+
+	public String getSnowsportGenre() {
+		return snowsportGenre;
+	}
+
 }

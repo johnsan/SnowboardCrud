@@ -1,7 +1,8 @@
 <%@ page import="java.util.List" %>
-<%@ page import="javax.jdo.PersistenceManager" %>
+<%@ page import="javax.persistence.EntityManager" %>
 <%@ page import="com.snowboardcrud.domain.Snowboard" %>
-<%@ page import="com.snowboardcrud.repository.PMF" %>
+<%@ page import="com.snowboardcrud.repository.EMF" %>
+<%@ page import="com.google.appengine.api.datastore.KeyFactory" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <html>
@@ -43,13 +44,16 @@
 
 <hr />
 <%
-	PersistenceManager pm = PMF.get().getPersistenceManager();
-	String query = "select from " + Snowboard.class.getName() + " order by brand, model asc range 0,5";
-	List<Snowboard> snowboards = (List<Snowboard>) pm.newQuery(query).execute();
+	// ToDo move outside view.
+	EntityManager em = EMF.get().createEntityManager();
+	String query = "select from " + Snowboard.class.getName() + " order by brand, model asc range 0,30";
+	List<Snowboard> snowboards = (List<Snowboard>) em.createQuery(query).getResultList();
 	if (snowboards.isEmpty()) {
- %>
+%>
 <p>No snowboards currently exist.</p>
-<%	} else { %>
+<%
+	} else {
+%>
 <div class="container">
 	<div class="top_row">
 		<div class="left">
@@ -62,30 +66,31 @@
 			<p>Length</p>
 		</div>
 		<div class="middle">
-			<p>Type</p>
+			<p>Genre</p>
 		</div>
 		<div class="right">
 			<p></p>
 		</div>
 	</div>
  <%
-		for (Snowboard s : snowboards) {
+ 	for (Snowboard s : snowboards) {
+ 		String key = KeyFactory.keyToString(s.getKey());
  %>
  	<div class="row">
-		<div class="left" id="<%= s.getId() %>_Brand">
+		<div class="left" id="<%= key %>_Brand">
 			<span><%= s.getBrand() %></span>
 		</div>
-		<div class="middle" id="<%= s.getId() %>_Model">
+		<div class="middle" id="<%= key %>_Model">
 			<span><%= s.getModel() %></span>
 		</div>
-		<div class="middle" id="<%= s.getId() %>_Length">
-			<span>152</span>
+		<div class="middle" id="<%= key %>_Length">
+			<span><%= s.getLength() %></span>
 		</div>
-		<div class="middle" id="<%= s.getId() %>_Type">
-			<span>Freestyle</span>
+		<div class="middle" id="<%= key %>_snowsportGenre">
+			<span><%= s.getSnowsportGenre() %></span>
 		</div>
 		<div class="right">
-			<span><a href="/snowboard/deleteSnowboard/<%= s.getId() %>">Delete</a></span>
+			<span><a href="/snowboard/deleteSnowboard/<%= key %>">Delete</a></span>
 		</div>
 	</div>
 <%
@@ -94,7 +99,8 @@
 </div>
 <%
 	}
-	pm.close();
+	//pm.close();
+	em.close();
 %>
       
       

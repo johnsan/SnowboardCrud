@@ -1,9 +1,10 @@
 package com.snowboardcrud.web;
 
-import javax.jdo.PersistenceManager;
-
+import javax.persistence.EntityManager;
+import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.snowboardcrud.domain.Snowboard;
-import com.snowboardcrud.repository.PMF;
+import com.snowboardcrud.repository.EMF;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -24,33 +25,33 @@ public class SnowboardController {
 		System.out.println("Brand:" + snowboard.getBrand() + " " +
 					"Model:" + snowboard.getModel());
 
-        PersistenceManager pm = PMF.get().getPersistenceManager();
+		EntityManager em = EMF.get().createEntityManager();
         try {
-            pm.makePersistent(snowboard);
+        	em.persist(snowboard);
         } catch (Exception e){
         	System.out.println(e);
         } finally {
-            pm.close();
+        	em.close();
         }
 		
 		return "redirect:createSnowboard";
 	}
 	
 	@RequestMapping(value = "/deleteSnowboard/{id}")
-	public String processDeleteSnowboard(@PathVariable ("id") Long id) {
+	public String processDeleteSnowboard(@PathVariable ("id") String id) {
 		
-		System.out.println("Snowboard with id:" + id + " " +
+		Key key = KeyFactory.stringToKey(id);
+		System.out.println("Snowboard with key:" + key + " " +
 					"--- Ready For Deletion");
 
-        PersistenceManager pm = PMF.get().getPersistenceManager();
+        EntityManager em = EMF.get().createEntityManager();
         try {
-        	Snowboard snowboard = pm.getObjectById(Snowboard.class, id);
-        	pm.deletePersistent(snowboard);
-            pm.makePersistent(snowboard);
+        	Snowboard snowboard = em.find(Snowboard.class, key);
+        	em.remove(snowboard);
         } catch (Exception e){
         	System.out.println(e);
         } finally {
-            pm.close();
+        	em.close();
         }
 	
 		return "redirect:/snowboard/createSnowboard";
@@ -59,24 +60,25 @@ public class SnowboardController {
 	@RequestMapping(value = "/ajaxUpdate/{id}/{newValue}", method = RequestMethod.POST)
 	public String ajaxUpdate(@PathVariable ("id") String id, 
 			@PathVariable ("newValue") String newValue){
-		
+
 		String[] array = id.split("\\_");
-		PersistenceManager pm = PMF.get().getPersistenceManager();
+		EntityManager em = EMF.get().createEntityManager();
         try {
-        	Snowboard snowboard = pm.getObjectById(Snowboard.class, Long.valueOf(array[0]));
+        	Key key = KeyFactory.stringToKey(array[0]);
+        	Snowboard snowboard = em.find(Snowboard.class, key);
         	if(array[1].equals("Brand")){
         		snowboard.setBrand(newValue);
         	}else if(array[1].equals("Model")){
         		snowboard.setModel(newValue);
         	}else if(array[1].equals("Length")){
-        		System.out.println("setLength");
+        		snowboard.setLength(Short.valueOf(newValue));
         	}else{
-        		System.out.println("setType");
+        		snowboard.setSnowsportGenre(newValue);
         	}
         } catch (Exception e){
         	System.out.println(e);
         } finally {
-            pm.close();
+            em.close();
         }
 		
 		return null;
