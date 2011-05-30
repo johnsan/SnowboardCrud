@@ -1,1 +1,5 @@
-Experimental Crud app.
+Example Java application using the Spring MVC framework on Google App Engine with jQuery, JPA and JSTL. 
+
+CRUD (Create Read Update Delete) functionality.
+
+Working application however further development planned.
