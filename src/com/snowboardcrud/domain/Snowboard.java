@@ -11,7 +11,7 @@ import javax.persistence.Id;
 public class Snowboard {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Key key;
+    private Long id;
 
     private String brand;
 
@@ -19,10 +19,10 @@ public class Snowboard {
     
     private Short length;
 
-    private String snowsportGenre;
+    private String genre;
 
-    public Key getKey() {
-        return key;
+    public Long getId() {
+        return id;
     }
 
 	public void setBrand(String brand) {
@@ -49,12 +49,12 @@ public class Snowboard {
 		return length;
 	}
 
-	public void setSnowsportGenre(String snowsportGenre) {
-		this.snowsportGenre = snowsportGenre;
+	public void setGenre(String genre) {
+		this.genre = genre;
 	}
 
-	public String getSnowsportGenre() {
-		return snowsportGenre;
+	public String getGenre() {
+		return genre;
 	}
 
 }

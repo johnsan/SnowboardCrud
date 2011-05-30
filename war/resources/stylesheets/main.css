@@ -24,6 +24,10 @@ h3{
 	display: table-cell;
 	padding-right: 10px;
 }
+.left_create, .right_create, .middle_create {
+	display: table-cell;
+	padding-right: 10px;
+}
 .highlight{
 	background-color:#FFCCFF;
 }

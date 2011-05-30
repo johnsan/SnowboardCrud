@@ -1,10 +1,7 @@
 package com.snowboardcrud.web;
 
-import javax.persistence.EntityManager;
-import com.google.appengine.api.datastore.Key;
-import com.google.appengine.api.datastore.KeyFactory;
 import com.snowboardcrud.domain.Snowboard;
-import com.snowboardcrud.repository.EMF;
+import com.snowboardcrud.service.SnowboardManager;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -17,75 +14,45 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 @RequestMapping("/snowboard")
 public class SnowboardController {
+	
+	private SnowboardManager snowboardManager = new SnowboardManager();
 
-	@RequestMapping(value = "/processCreateSnowboard", method = RequestMethod.POST)
+	@RequestMapping(value = "/createSnowboard", method = RequestMethod.POST)
 	public String processCreateSnowboard(@ModelAttribute("snowboard")
 							Snowboard snowboard, BindingResult result) {
-		
-		System.out.println("Brand:" + snowboard.getBrand() + " " +
-					"Model:" + snowboard.getModel());
 
-		EntityManager em = EMF.get().createEntityManager();
-        try {
-        	em.persist(snowboard);
-        } catch (Exception e){
-        	System.out.println(e);
-        } finally {
-        	em.close();
-        }
+		snowboardManager.createSnowboard(snowboard);
 		
-		return "redirect:createSnowboard";
+		return "redirect:manageSnowboard";
 	}
 	
 	@RequestMapping(value = "/deleteSnowboard/{id}")
-	public String processDeleteSnowboard(@PathVariable ("id") String id) {
+	public String processDeleteSnowboard(@PathVariable ("id") Long id) {
 		
-		Key key = KeyFactory.stringToKey(id);
-		System.out.println("Snowboard with key:" + key + " " +
-					"--- Ready For Deletion");
+		snowboardManager.deleteSnowboard(id);
 
-        EntityManager em = EMF.get().createEntityManager();
-        try {
-        	Snowboard snowboard = em.find(Snowboard.class, key);
-        	em.remove(snowboard);
-        } catch (Exception e){
-        	System.out.println(e);
-        } finally {
-        	em.close();
-        }
-	
-		return "redirect:/snowboard/createSnowboard";
+		return "redirect:/snowboard/manageSnowboard";
 	}
 	
-	@RequestMapping(value = "/ajaxUpdate/{id}/{newValue}", method = RequestMethod.POST)
-	public String ajaxUpdate(@PathVariable ("id") String id, 
+	@RequestMapping(value = "/ajaxUpdate/{id}/{fieldModified}/{newValue}", 
+			method = RequestMethod.POST)
+	public String ajaxUpdate(@PathVariable ("id") Long id, 
+			@PathVariable ("fieldModified") String fieldModified, 
 			@PathVariable ("newValue") String newValue){
-
-		String[] array = id.split("\\_");
-		EntityManager em = EMF.get().createEntityManager();
-        try {
-        	Key key = KeyFactory.stringToKey(array[0]);
-        	Snowboard snowboard = em.find(Snowboard.class, key);
-        	if(array[1].equals("Brand")){
-        		snowboard.setBrand(newValue);
-        	}else if(array[1].equals("Model")){
-        		snowboard.setModel(newValue);
-        	}else if(array[1].equals("Length")){
-        		snowboard.setLength(Short.valueOf(newValue));
-        	}else{
-        		snowboard.setSnowsportGenre(newValue);
-        	}
-        } catch (Exception e){
-        	System.out.println(e);
-        } finally {
-            em.close();
-        }
 		
+		snowboardManager.updateSnowboard(id, fieldModified, newValue);
+
 		return null;
 	}
 	
-	@RequestMapping("/createSnowboard")
+	@RequestMapping("/manageSnowboard")
 	public ModelAndView showSnowboards() {
-		return new ModelAndView("snowboard/createSnowboard", "command", new Snowboard());
+		
+		ModelAndView modelAndView = new ModelAndView("snowboard/manageSnowboard");
+		modelAndView.addObject("command", new Snowboard());
+		modelAndView.addObject("snowboardList", snowboardManager.getSnowboardList());
+		
+		return modelAndView;
+		
 	}
 }
